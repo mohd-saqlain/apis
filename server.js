@@ -7,7 +7,7 @@ mongoose.connect('mongodb+srv://saqlainaly:w59rhThu4142wuAs@cluster0.nixfrcw.mon
 app.use(express.json());
 app.use(cors())
 
-const port = 80
+const port = 5000;
 
 const patientSchema = new mongoose.Schema({
     name:{
@@ -18,6 +18,10 @@ const patientSchema = new mongoose.Schema({
     },
     appointment_date:{
         type:String,
+    },
+    is_approved:{
+        type:Boolean,
+        default:false,
     }
 })
 
@@ -36,7 +40,7 @@ app.post('/get-number',async (req,res)=>{
         const patient = new Patient({name:name||"",number:to_number||"",appointment_date:appointment||"",});
         const patientCreated = await patient.save();
         if(patientCreated){
-            res.status(200).json({message:"Patient Captured Successfully"});
+            res.status(200).json({message:"Appointment Captured Successfully from server"});
         }else{
             res.status(400).json({message:"Some problem occurred"});
         }
