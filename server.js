@@ -114,7 +114,32 @@ app.get('/clients',async (req,res) => {
     }
 })
 
+app.get('/get-clients',async (req,res) => {
+    try{
+        const clients = await Client.find();
+        res.json(clients)
+    }
+    catch(err){
+        res.status(500).json({error:"Interal Server Error"})
+    }
+})
+
+app.post('/update-client',async (req,res) => {
+    try{
+        const {name,description} = req.body?.args;
+        const {to_number} = req.body?.call;
+        const isUpdated = await Client.updateOne({number:to_number},{$set:{name:name||"",description:description||""}});
+        if(!isUpdated){
+            return res.status(400).json({message:"Some problem occured"})
+        }
+        res.status(200).json({message:"Data updated successfully"})
+    }
+    catch(err){
+        console.log(err)
+        res.status(500).json({error:"Internal Server Error"})
+    }
+})
+
 app.listen(port,()=>{
     console.log(`Server is Listening on Port`);
-   
 })
