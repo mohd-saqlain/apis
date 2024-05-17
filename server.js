@@ -27,7 +27,14 @@ const patientSchema = new mongoose.Schema({
     }
 })
 
+const clientSchema = new mongoose.Schema({
+    name:String,
+    number:String,
+    description:String,
+})
+
 const Patient = mongoose.model('patient',patientSchema);
+const Client = mongoose.model('client',clientSchema);
 
 app.get('/', (req, res) => {
     res.send('hello world')
@@ -77,6 +84,35 @@ app.post('/user-details', async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+app.post('/insert-number',async (req,res) => {
+    try{
+        const {number,description} = req.body;
+        if(!number){
+           return res.status(400).json({message:"Please add number"})
+        }
+        console.log(number);
+        const client = new Client({number:number,description:description || null})
+        const clientCreated = await client.save();
+        if(!clientCreated){
+            return res.status(400).json({message:"Some problem occured"})
+        }
+        res.json({message:"Number captured"})
+    }catch(err){
+        console.log(err)
+        res.status(500).json({error:'Internal Server Error'})
+    }
+})
+
+app.get('/clients',async (req,res) => {
+    try{
+        const clients = await Client.find({description:null});
+        res.json(clients)
+    }
+    catch(err){
+        res.status(500).json({error:"Interal Server Error"})
+    }
+})
 
 app.listen(port,()=>{
     console.log(`Server is Listening on Port`);
